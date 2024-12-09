@@ -14,6 +14,8 @@ public class BallScript : MonoBehaviour
     private Rigidbody2D slingRb;
     private LineRenderer lr;
 
+    [HideInInspector] public BallSpawner spawner; // Reference to the spawner
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -79,5 +81,37 @@ public class BallScript : MonoBehaviour
     {
         yield return new WaitForSeconds( releaseDelay );
         sj.enabled = false;
+
+        // Start the timer to destroy the ball
+        StartCoroutine(DestroyAfterDelay(5f));
+    }
+
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Notify the spawner to clear the current ball reference
+        if (spawner != null)
+        {
+            spawner.ClearCurrentBall();
+            spawner.SpawnBall(); // Spawn a new ball immediately
+        }
+
+        Destroy(gameObject); // Destroy the ball after the delay
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Calculate collision force
+        float collisionForce = collision.relativeVelocity.magnitude;
+
+        // Send the collision force to the material
+        var materialHandler = collision.gameObject.GetComponent<MaterialHandler>();
+        if (materialHandler != null)
+        {
+            materialHandler.TakeDamage(collisionForce);
+        }
+
+        Debug.Log($"Collision Force: {collisionForce}");
     }
 }
