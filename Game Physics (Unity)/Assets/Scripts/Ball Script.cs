@@ -112,6 +112,6 @@ public class BallScript : MonoBehaviour
             materialHandler.TakeDamage(collisionForce);
         }
 
-        Debug.Log($"Collision Force: {collisionForce}");
+        //Debug.Log($"Collision Force: {collisionForce}");
     }
 }
