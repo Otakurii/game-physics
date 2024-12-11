@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 9021628545754512926}
   m_Layer: 0
   m_Name: Ball
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -331,7 +331,7 @@ MonoBehaviour:
   - {x: -0.16530395, y: -0.4588801, z: -0.000000007450581}
   m_ShapePathHash: 647388406
   m_Mesh: {fileID: 0}
-  m_InstanceId: 38212
+  m_InstanceId: 32624
   m_LocalBounds:
     m_Center: {x: 0.03279686, y: -0.008928955, z: 0}
     m_Extent: {x: 0.45397472, y: 0.49845082, z: 0}
