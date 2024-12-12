@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MaterialHandler : MonoBehaviour
@@ -12,7 +15,8 @@ public class MaterialHandler : MonoBehaviour
     public Sprite[] stateSprites; // Array of sprites for different states
     private SpriteRenderer spriteRenderer;
 
-    public GameObject explosionEffect; //explosion gas effect 
+    public GameObject explosionEffect;  //explosion gas effect from animator
+    public ParticleSystem particleEffect;   //particle system
 
     Animator anim;  //for explosion effect
 
@@ -20,8 +24,10 @@ public class MaterialHandler : MonoBehaviour
     {
         currentHitPoints = maxHitPoints; // Initialize HP
         spriteRenderer = GetComponent<SpriteRenderer>();
+        particleEffect = GetComponentInChildren<ParticleSystem>();
         UpdateMaterialState(); // Set initial sprite
     }
+
 
     public void TakeDamage(float collisionForce)
     {
@@ -50,7 +56,8 @@ public class MaterialHandler : MonoBehaviour
         if (currentHitPoints <= 0)
         {
             ExplosionEffect();
-            DestroyMaterial();
+            //DestroyMaterial();
+            StartCoroutine(ParticleEffect());
         }
 
         //Debug.Log($"Collision Force: {collisionForce}, Damage: {damage}, Remaining HP: {currentHitPoints}");
@@ -80,11 +87,6 @@ public class MaterialHandler : MonoBehaviour
         
     }
 
-    private void DestroyMaterial()
-    {
-        Destroy(gameObject);
-    }
-
     private void ExplosionEffect()
     {
         //explosion effect
@@ -101,10 +103,53 @@ public class MaterialHandler : MonoBehaviour
         //particle effect for diff material
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
-        if(other.contacts[0].normal.x > 0.5f){
-            Debug.Log("collision!");
+        // Check if the object colliding has the "Player" tag
+        if (other.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("Player collided with the box!");
+
+            // Get the collision normal (opposite direction of impact)
+            Vector2 collisionNormal = other.contacts[0].normal;
+
+            // Adjust the rotation of the particle system to emit particles in the opposite direction
+            AlignParticleSystemToCollision(collisionNormal);
+
+            StartCoroutine(ParticleEffect());
+        }
+    }
+
+    private void AlignParticleSystemToCollision(Vector2 normal)
+    {
+        // Convert collision normal into an angle in degrees
+        float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
+
+        // Rotate the particle system
+        particleEffect.transform.rotation = Quaternion.Euler(angle + 90, 0, 0); // Add 180 to invert the direction
+    }
+
+    IEnumerator ParticleEffect()
+    {
+        // Play the particle system
+        if (particleEffect != null)
+        {
+            particleEffect.transform.position = transform.position; 
+            particleEffect.Play();
+            Debug.Log("Particle system should now be playing!");
+
+
+            if (currentHitPoints <= 0)
+            {
+                Debug.Log("destroying game object");
+                yield return new WaitForSeconds(particleEffect.main.startLifetime.constantMax - 2.2f);
+                Destroy(gameObject);
+            }
+            
+        }
+        else
+        {
+            Debug.LogWarning("Particle system is not assigned!");
         }
     }
 }
