@@ -5,8 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
-    public GameObject pausePanel;
-    public GameObject inGameMenu; // Drag your pause menu UI here
+    public GameObject inGameMenu; // Drag your in-game menu UI here
     public GameObject winningPanel;
     private bool isPaused = false;
 
@@ -19,13 +18,13 @@ public class UIController : MonoBehaviour
 
     void Update()
     {
-    if (Input.GetKeyDown(KeyCode.Escape))
-    {
-        TogglePauseMenu();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleInGameMenu();
+        }
     }
-    }   
-    
-    public void TogglePauseMenu()
+
+    public void ToggleInGameMenu()
     {
         if (isPaused)
             ResumeGame();
@@ -43,7 +42,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void ResumeGame()
+    public void CloseInGameMenu()
     {
         if (inGameMenu != null)
         {
@@ -57,6 +56,11 @@ public class UIController : MonoBehaviour
     {
         Time.timeScale = 1f; // Ensure the game isn't paused
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ResumeGame()
+    {
+        CloseInGameMenu();
     }
 
     public void SkipLevel()
@@ -74,12 +78,17 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void BackToLevelSelection()
+     public void ExitGame()
     {
-        Time.timeScale = 1f; // Ensure the game isn't paused
-        SceneManager.LoadScene("LevelSelection"); // Replace with your level selection scene name
+        Application.Quit();
     }
 
+    public void BackToSelection()
+    {
+        Time.timeScale = 1f; // Ensure the game isn't paused
+        SceneManager.LoadScene("Level Selection"); // Replace with your home scene name
+    } 
+    
     public void LoadLevel(int levelIndex)
     {
         Time.timeScale = 1f; // Ensure the game isn't paused
