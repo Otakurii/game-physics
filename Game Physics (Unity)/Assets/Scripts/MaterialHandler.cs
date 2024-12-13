@@ -142,7 +142,7 @@ public class MaterialHandler : MonoBehaviour
             if (currentHitPoints <= 0)
             {
                 Debug.Log("destroying game object");
-                yield return new WaitForSeconds(particleEffect.main.startLifetime.constantMax - 2.2f);
+                yield return new WaitForSeconds(particleEffect.main.startLifetime.constantMax - 1.2f);
                 Destroy(gameObject);
             }
             
